@@ -3,17 +3,18 @@ package starter.petstore.stepdefs;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 import net.serenitybdd.screenplay.rest.interactions.Get;
 import net.thucydides.model.util.EnvironmentVariables;
+import static net.serenitybdd.screenplay.rest.questions.ResponseConsequence.seeThatResponse;
 
 
+@Data
+@NoArgsConstructor
 public class StepDefs {
-
-//    Given
-//    When I call get pet with status as "available"
-//    Then I should get the list of all the available pets
 
     EnvironmentVariables environmentVariables;
 
@@ -26,15 +27,25 @@ public class StepDefs {
                 .whoCan(CallAnApi.at(theRestApiBaseUrl));
 
     }
-    @When("I call get end point pet with status as {string}")
+
+    @When("I call get end point for fetching pets and with status as {string}")
     public void iCallGetEndPointWithStatusAs(String status) {
         I.attemptsTo(
-                Get.resource("/pet/findByStatus?status=available")
+                Get.resource("/pet/findByStatus?status="+status)
         );
     }
-    @Then("I should get a response")
-    public void i_should_get_a_response() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+    @Then("I should get the status code as 200")
+    public void iShouldGetTheStatusCodeAs() {
+        I.should(
+                seeThatResponse("The Status code is : ", response -> response.statusCode(200))
+        );
+    }
+    @Then("I should get the list of all the available pets")
+    public void iShouldGetTheListOfAllTheAvailablePets() {
+        I.should(
+                seeThatResponse("I should get the response body with text as : ",
+                        response -> response.statusCode(200).body("status", org.hamcrest.Matchers.equalTo("available"))
+        ));
     }
 }
