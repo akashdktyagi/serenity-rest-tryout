@@ -7,8 +7,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-        features = "src/test/resources/features",
-        glue = "starter.petstore.stepdefs"
+        features = "classpath:features",
+        glue = "starter.petstore.stepdefs",
+        tags = "@api"
 )
-public class RunIT {
+public class RunTest {
 }

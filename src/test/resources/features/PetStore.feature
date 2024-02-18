@@ -1,10 +1,15 @@
 
 
+@api
+Feature: Pet API test
 
-Feature: Per store API test
-
-  Scenario: Store API test
+  Scenario: Get Pet API
     Given I have a pet store API
     When I call get end point for fetching pets and with status as "available"
     Then I should get the status code as 200
-    Then I should get the list of all the available pets
+
+  Scenario: Create Pet API
+    Given I have a pet store API
+    When I create a new pet with body
+    Then I should get the status code as 200
+    And New pet is created successfully
