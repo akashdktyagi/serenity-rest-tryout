@@ -1,43 +1,31 @@
 package starter.petstore.stepdefs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import net.serenitybdd.annotations.Steps;
-import net.serenitybdd.core.annotations.findby.By;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import net.serenitybdd.core.di.SerenityInfrastructure;
-import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
-import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
 import net.serenitybdd.screenplay.actions.Open;
-import net.serenitybdd.screenplay.actions.SendKeys;
 import net.serenitybdd.screenplay.annotations.CastMember;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 import net.serenitybdd.screenplay.rest.interactions.Get;
-
-import net.serenitybdd.screenplay.rest.interactions.Post;
-import net.serenitybdd.screenplay.targets.Target;
 import net.serenitybdd.screenplay.ui.InputField;
 import net.thucydides.model.util.EnvironmentVariables;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.chrome.ChromeDriver;
-import starter.petstore.client.openapi.model.Category;
-import starter.petstore.client.openapi.model.Pet;
-import starter.petstore.client.openapi.model.Tag;
 
-
-import java.util.Arrays;
 import java.util.Locale;
 
 import static net.serenitybdd.screenplay.rest.questions.ResponseConsequence.seeThatResponse;
 import static org.hamcrest.Matchers.equalTo;
-import static starter.petstore.core.PetStoreRequstBodySvc.generateCreateNewPetBodyWithCategoryNameAndTagNameAs;
 import static starter.petstore.core.PetStoreRequstBodySvc.generateFullPetJsonBody;
 
 
@@ -89,13 +77,26 @@ public class StepDefs  {
 //        String body = generateCreateNewPetBodyWithCategoryNameAndTagNameAs(categoryName, petName, tagName);
         String body = generateFullPetJsonBody();
 
-        SerenityRest.given().header("Content-Type", "application/json").body(body).when().post("/pet");
+        RestAssured.baseURI = "https://petstore.swagger.io/v2";
+        // Send POST request
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .post("/pet");
 
-        I.attemptsTo(
-                Post.to("/pet")
-                        .with(request -> request.header("Content-Type", "application/json")
-                                .body(body))
-        );
+        // Verify response
+        response.then().statusCode(200); // Assuming 200 is the success status code
+        System.out.println("Response: " + response.getBody().asString());
+
+        //        SerenityRest.given().header("Content-Type", "application/json").body(body).when().post("/pet");
+
+
+
+//        I.attemptsTo(
+//                Post.to("/pet")
+//                        .with(request -> request.header("Content-Type", "application/json")
+//                                .body(body))
+//        );
     }
 
     @Then("New pet is created successfully")
