@@ -2,7 +2,11 @@ package starter.petstore.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openapitools.model.Category;
 import org.openapitools.model.Pet;
+import org.openapitools.model.Tag;
+
+import java.util.List;
 
 public class PetStoreRequstBodySvc {
 
@@ -26,7 +30,7 @@ public class PetStoreRequstBodySvc {
 
     }*/
 
-    public static String generateFullPetJsonBody() throws JsonProcessingException {
+    public static String generateFullPetJsonBody(String categoryName, String petName, String tagName) throws JsonProcessingException {
 /*        Tag tag1 = new Tag();
         tag1.name("tag1");
 
@@ -51,10 +55,17 @@ public class PetStoreRequstBodySvc {
         pet.status(Pet.StatusEnum.AVAILABLE);*/
 
         // Create a new Pet object using the builder pattern
+
+        // Create a Tag object
+        Tag tag = new Tag(0L,tagName);
+        Category category = new Category(0L,categoryName);
+
         Pet pet = Pet.builder()
                 .id(123L) // Set the ID of the pet
-                .name("Rex") // Set the name of the pet
+                .name(petName) // Set the name of the pet
                 .status(Pet.StatusEnum.AVAILABLE) // Set the status of the pet
+                .tags(List.of(tag))
+                .category(category)
                 .build();
 
         // Convert the Pet object to JSON
