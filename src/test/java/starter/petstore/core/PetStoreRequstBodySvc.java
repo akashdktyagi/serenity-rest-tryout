@@ -2,19 +2,17 @@ package starter.petstore.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import starter.petstore.client.openapi.model.Category;
-import starter.petstore.client.openapi.model.Pet;
-import starter.petstore.client.openapi.model.Tag;
+import org.openapitools.model.Category;
+import org.openapitools.model.Pet;
+import org.openapitools.model.Tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PetStoreRequstBodySvc {
 
-    public static String generateCreateNewPetBodyWithCategoryNameAndTagNameAs(String categoryName, String petName, String tagName) throws JsonProcessingException {
+/*     public static String generateCreateNewPetBodyWithCategoryNameAndTagNameAs(String categoryName, String petName, String tagName) throws JsonProcessingException {
 
-        Category category = new Category();
+       Category category = new Category();
         category.name(categoryName);
 
         Tag tag = new Tag();
@@ -25,14 +23,15 @@ public class PetStoreRequstBodySvc {
         pet.setName(petName);
         pet.tags(Arrays.asList(tag));
 
+
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println("DEBUG:" +  objectMapper.writeValueAsString(pet));
         return objectMapper.writeValueAsString(pet);
 
-    }
+    }*/
 
-    public static String generateFullPetJsonBody() throws JsonProcessingException {
-        Tag tag1 = new Tag();
+    public static String generateFullPetJsonBody(String categoryName, String petName, String tagName) throws JsonProcessingException {
+/*        Tag tag1 = new Tag();
         tag1.name("tag1");
 
         Tag tag2 = new Tag();
@@ -53,11 +52,44 @@ public class PetStoreRequstBodySvc {
         pet.tags(listOfTags);
         pet.addPhotoUrlsItem("url1");
         pet.addPhotoUrlsItem("url2");
-        pet.status(Pet.StatusEnum.AVAILABLE);
+        pet.status(Pet.StatusEnum.AVAILABLE);*/
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("DEBUG:" +  objectMapper.writeValueAsString(pet));
-        return objectMapper.writeValueAsString(pet);
+        // Create a new Pet object using the builder pattern
+
+        // Create a Tag object
+        Tag tag = new Tag(0L,tagName);
+        Category category = new Category(0L,categoryName);
+
+        Pet pet = Pet.builder()
+                .id(123L) // Set the ID of the pet
+                .name(petName) // Set the name of the pet
+                .status(Pet.StatusEnum.AVAILABLE) // Set the status of the pet
+                .tags(List.of(tag))
+                .category(category)
+                .build();
+
+        // Convert the Pet object to JSON
+        String jsonPayload = toJson(pet);
+
+        // Print the JSON payload
+        System.out.println(jsonPayload);
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        System.out.println("DEBUG:" +  objectMapper.writeValueAsString(pet));
+//        return objectMapper.writeValueAsString(pet);
+
+        return jsonPayload;
+    }
+
+    // Convert an object to JSON using Jackson ObjectMapper
+    private static String toJson(Object obj) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public  Pet generateBasicPet(){
@@ -68,13 +100,13 @@ public class PetStoreRequstBodySvc {
         return pet;
     }
 
-    public Pet addTagsToPetAndReturn(){
-        Pet pet  = generateBasicPet();
-        Tag tag1 = new Tag();
-        tag1.name("tag1");
-        pet.addTagsItem(tag1);
-        return pet;
+//    public Pet addTagsToPetAndReturn(){
+//        Pet pet  = generateBasicPet();
+//        Tag tag1 = new Tag();
+//        tag1.name("tag1");
+//        pet.addTagsItem(tag1);
+//        return pet;
 
 //        Builder.buildPet().withTags(Arrays.asList(tag1)).build();
-    }
+//    }
 }
